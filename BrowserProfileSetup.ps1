@@ -3,14 +3,74 @@
 # 支持 Microsoft Edge / Google Chrome
 # ============================================
 
-$Host.UI.RawUI.WindowTitle = "多账号浏览器环境创建工具"
+param(
+    [ValidateSet("auto", "zh-CN", "ja-JP")]
+    [string]$Language = "auto"
+)
+
+if ($Language -eq "auto") {
+
+    $SystemLanguage = (Get-WinUserLanguageList | Select-Object -First 1).LanguageTag
+
+    if ([string]::IsNullOrWhiteSpace($SystemLanguage)) {
+        $SystemLanguage = [Globalization.CultureInfo]::CurrentCulture.Name
+    }
+
+    $DefaultLanguage = if ($SystemLanguage -like "ja*") { "ja-JP" } else { "zh-CN" }
+    $MenuMessagesPath = Join-Path $PSScriptRoot "locales\$DefaultLanguage.psd1"
+    $MenuMessages = Import-PowerShellDataFile $MenuMessagesPath
+    $DefaultLanguageName = if ($DefaultLanguage -eq "ja-JP") {
+        $MenuMessages.JapaneseLanguageName
+    }
+    else {
+        $MenuMessages.ChineseLanguageName
+    }
+
+    Clear-Host
+
+    while ($true) {
+
+        Write-Host $MenuMessages.SelectLanguage -ForegroundColor White
+        Write-Host ""
+        Write-Host ("  1. {0}" -f $MenuMessages.ChineseLanguageName)
+        Write-Host ("  2. {0}" -f $MenuMessages.JapaneseLanguageName)
+        Write-Host ""
+        Write-Host ($MenuMessages.UseSystemDefaultLanguage -f $DefaultLanguageName)
+        Write-Host ""
+
+        $LanguageChoice = Read-Host $MenuMessages.EnterLanguageChoice
+
+        if ([string]::IsNullOrWhiteSpace($LanguageChoice)) {
+            $Language = $DefaultLanguage
+            break
+        }
+        elseif ($LanguageChoice -eq "1") {
+            $Language = "zh-CN"
+            break
+        }
+        elseif ($LanguageChoice -eq "2") {
+            $Language = "ja-JP"
+            break
+        }
+        else {
+            Write-Host ""
+            Write-Host $MenuMessages.InvalidLanguageChoice -ForegroundColor Yellow
+            Write-Host ""
+        }
+    }
+}
+
+$MessagesPath = Join-Path $PSScriptRoot "locales\$Language.psd1"
+$Messages = Import-PowerShellDataFile $MessagesPath
+
+$Host.UI.RawUI.WindowTitle = $Messages.WindowTitle
 
 Clear-Host
 
 function Show-Header {
     Write-Host ""
     Write-Host "==========================================" -ForegroundColor Cyan
-    Write-Host "      多账号浏览器环境创建工具" -ForegroundColor Cyan
+    Write-Host "      $($Messages.HeaderTitle)" -ForegroundColor Cyan
     Write-Host "==========================================" -ForegroundColor Cyan
     Write-Host ""
 }
@@ -30,13 +90,13 @@ $DocumentsPath = [Environment]::GetFolderPath("MyDocuments")
 
 while ($true) {
 
-    Write-Host "请选择浏览器：" -ForegroundColor White
+    Write-Host $Messages.SelectBrowser -ForegroundColor White
     Write-Host ""
     Write-Host "  1. Microsoft Edge"
     Write-Host "  2. Google Chrome"
     Write-Host ""
 
-    $BrowserChoice = Read-Host "请输入 1 或 2"
+    $BrowserChoice = Read-Host $Messages.EnterBrowserChoice
 
     if ($BrowserChoice -eq "1") {
 
@@ -69,7 +129,7 @@ while ($true) {
     else {
 
         Write-Host ""
-        Write-Host "输入错误，请输入 1 或 2。" -ForegroundColor Yellow
+        Write-Host $Messages.InvalidBrowserChoice -ForegroundColor Yellow
         Write-Host ""
     }
 }
@@ -91,17 +151,17 @@ foreach ($Path in $BrowserPaths) {
 if (-not $BrowserPath) {
 
     Write-Host ""
-    Write-Host "错误：没有找到 $BrowserName。" -ForegroundColor Red
+    Write-Host ($Messages.BrowserNotFound -f $BrowserName) -ForegroundColor Red
     Write-Host ""
-    Write-Host "请确认电脑上已经安装 $BrowserName。"
+    Write-Host ($Messages.InstallBrowser -f $BrowserName)
     Write-Host ""
 
-    Read-Host "按 Enter 键退出"
+    Read-Host $Messages.PressEnterToExit
     exit
 }
 
 Write-Host ""
-Write-Host "✓ 已找到 $BrowserName" -ForegroundColor Green
+Write-Host ($Messages.BrowserFound -f $BrowserName) -ForegroundColor Green
 Write-Host ""
 
 # ------------------------------------------------
@@ -127,14 +187,14 @@ while ($true) {
     Write-Host "------------------------------------------" -ForegroundColor DarkGray
     Write-Host ""
 
-    $AccountName = Read-Host "请输入账号名称，例如：店铺A"
+    $AccountName = Read-Host $Messages.EnterAccountName
 
     $AccountName = $AccountName.Trim()
 
     if ([string]::IsNullOrWhiteSpace($AccountName)) {
 
         Write-Host ""
-        Write-Host "账号名称不能为空，请重新输入。" -ForegroundColor Yellow
+        Write-Host $Messages.AccountNameEmpty -ForegroundColor Yellow
         Write-Host ""
 
         continue
@@ -172,7 +232,7 @@ while ($true) {
     # Step 1：创建数据目录
     # ------------------------------------------------
 
-    Write-Host "[1/3] 创建浏览器数据目录..." -NoNewline
+    Write-Host $Messages.StepCreateProfile -NoNewline
 
     if (-not (Test-Path $ProfilePath)) {
 
@@ -193,12 +253,12 @@ while ($true) {
     if (Test-Path $ShortcutPath) {
 
         Write-Host ""
-        Write-Host "桌面已经存在：" -NoNewline
+        Write-Host $Messages.DesktopAlreadyExists -NoNewline
         Write-Host $ShortcutDisplayName -ForegroundColor Yellow
 
         Write-Host ""
 
-        $Overwrite = Read-Host "是否覆盖？(Y/N)"
+        $Overwrite = Read-Host $Messages.ConfirmOverwrite
 
         if ($Overwrite -match '^[Yy]$') {
 
@@ -216,7 +276,7 @@ while ($true) {
 
     if ($CreateShortcut) {
 
-        Write-Host "[2/3] 创建桌面快捷方式..." -NoNewline
+        Write-Host $Messages.StepCreateShortcut -NoNewline
 
         try {
 
@@ -232,7 +292,7 @@ while ($true) {
 
             $Shortcut.IconLocation = "$BrowserPath,0"
 
-            $Shortcut.Description = "$AccountName - 独立 $BrowserName 浏览器环境"
+            $Shortcut.Description = $Messages.ShortcutDescription -f $AccountName, $BrowserName
 
             $Shortcut.Save()
 
@@ -240,10 +300,10 @@ while ($true) {
         }
         catch {
 
-            Write-Host " 失败" -ForegroundColor Red
+            Write-Host $Messages.Failed -ForegroundColor Red
 
             Write-Host ""
-            Write-Host "快捷方式创建失败：" -ForegroundColor Red
+            Write-Host $Messages.ShortcutCreationFailed -ForegroundColor Red
             Write-Host $_.Exception.Message
 
             Write-Host ""
@@ -251,7 +311,7 @@ while ($true) {
     }
     else {
 
-        Write-Host "[2/3] 保留原有桌面快捷方式..." -NoNewline
+        Write-Host $Messages.StepKeepShortcut -NoNewline
         Write-Host " ✓" -ForegroundColor Green
     }
 
@@ -259,7 +319,7 @@ while ($true) {
     # Step 3：完成
     # ------------------------------------------------
 
-    Write-Host "[3/3] 完成设置..." -NoNewline
+    Write-Host $Messages.StepFinishSetup -NoNewline
 
     Start-Sleep -Milliseconds 300
 
@@ -271,31 +331,31 @@ while ($true) {
 
     Write-Host ""
     Write-Host "==========================================" -ForegroundColor Green
-    Write-Host "              创建完成！" -ForegroundColor Green
+    Write-Host "              $($Messages.CreationCompleted)" -ForegroundColor Green
     Write-Host "==========================================" -ForegroundColor Green
     Write-Host ""
 
-    Write-Host "浏览器：" -NoNewline
+    Write-Host $Messages.BrowserLabel -NoNewline
     Write-Host $BrowserName -ForegroundColor Cyan
 
-    Write-Host "账号名称：" -NoNewline
+    Write-Host $Messages.AccountNameLabel -NoNewline
     Write-Host $AccountName -ForegroundColor Cyan
 
-    Write-Host "桌面快捷方式：" -NoNewline
+    Write-Host $Messages.DesktopShortcutLabel -NoNewline
     Write-Host $ShortcutDisplayName -ForegroundColor Cyan
 
-    Write-Host "浏览器数据：" -NoNewline
+    Write-Host $Messages.BrowserDataLabel -NoNewline
     Write-Host $ProfilePath -ForegroundColor Cyan
 
     Write-Host ""
-    Write-Host "以后直接双击桌面的快捷方式即可。" -ForegroundColor White
+    Write-Host $Messages.ShortcutReady -ForegroundColor White
     Write-Host ""
 
     # ------------------------------------------------
     # 是否立即启动
     # ------------------------------------------------
 
-    $LaunchNow = Read-Host "是否现在打开这个浏览器账号？(Y/N)"
+    $LaunchNow = Read-Host $Messages.ConfirmLaunch
 
     if ($LaunchNow -match '^[Yy]$') {
 
@@ -310,7 +370,7 @@ while ($true) {
     # 是否继续创建
     # ------------------------------------------------
 
-    $Continue = Read-Host "是否继续创建其他账号？(Y/N)"
+    $Continue = Read-Host $Messages.ConfirmContinue
 
     if ($Continue -notmatch '^[Yy]$') {
         break
@@ -319,13 +379,13 @@ while ($true) {
     Clear-Host
     Show-Header
 
-    Write-Host "当前浏览器：" -NoNewline
+    Write-Host $Messages.CurrentBrowserLabel -NoNewline
     Write-Host $BrowserName -ForegroundColor Cyan
     Write-Host ""
 }
 
 Write-Host ""
-Write-Host "全部完成。" -ForegroundColor Green
+Write-Host $Messages.AllCompleted -ForegroundColor Green
 Write-Host ""
 
-Read-Host "按 Enter 键退出"
+Read-Host $Messages.PressEnterToExit

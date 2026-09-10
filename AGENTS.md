@@ -1,46 +1,50 @@
-# Repository Guidelines
+# 仓库指南
 
-## プロジェクト構成
+## 项目级文档约束
 
-このリポジトリは、Windows 上で Edge または Chrome の独立プロファイルとデスクトップショートカットを作成する小規模ツールです。
+本仓库内所有 Markdown 文档（`*.md`）必须使用简体中文编写，包括 README、贡献指南、设计说明、计划、变更记录及 AI 生成的辅助文档。代码、命令、文件路径、API 名称和无法准确翻译的技术术语可保留原文。新增或修改 Markdown 文件时，提交前必须检查正文语言；引用外部原文时，应优先提供中文概述。
 
-- `BrowserProfileSetup.ps1`: ブラウザ検出、入力検証、プロファイル作成、`.lnk` 作成を担当する本体。
-- `Start.bat`: UTF-8 コードページを設定し、本体を `ExecutionPolicy Bypass` で起動するエントリーポイント。
+## 项目结构
 
-生成物はリポジトリ内ではなく、`Documents\EdgeProfiles` または `Documents\ChromeProfiles` とデスクトップに保存されます。新しいロジックは原則として PowerShell 側へ追加し、バッチファイルは薄い起動ラッパーに保ってください。
+本项目是一个 Windows 小型工具，用于创建相互独立的 Edge 或 Chrome 浏览器配置和桌面快捷方式。
 
-## 実行・検証コマンド
+- `BrowserProfileSetup.ps1`：负责浏览器检测、输入验证、配置目录和 `.lnk` 快捷方式创建。
+- `Start.bat`：设置 UTF-8 代码页并启动 PowerShell 主脚本。
+- `locales/zh-CN.psd1`、`locales/ja-JP.psd1`：分别保存简体中文和日文界面文本。
 
-ビルド工程や外部依存関係はありません。Windows PowerShell で次を使用します。
+生成内容位于 `Documents\EdgeProfiles`、`Documents\ChromeProfiles` 和桌面，不应写入仓库。新增业务逻辑应放在 PowerShell 脚本中，批处理文件仅作为轻量启动入口。
+
+## 运行与验证命令
+
+项目无需构建，也没有外部依赖。在 Windows PowerShell 中运行：
 
 ```powershell
 .\Start.bat
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\BrowserProfileSetup.ps1
-powershell.exe -NoProfile -Command "$null = [System.Management.Automation.Language.Parser]::ParseFile('.\BrowserProfileSetup.ps1', [ref]$null, [ref]$errors); $errors"
 ```
 
-最初の 2 コマンドは対話実行、最後は構文エラーの確認用です。手動検証では Edge/Chrome の選択、空のアカウント名、不正なファイル名文字、既存ショートカットの上書き拒否と許可を確認してください。
+手动验证应覆盖浏览器选择、空账户名、非法文件名字符，以及已有快捷方式的保留和覆盖流程。
 
-## コーディング規約
+## 编码与命名规范
 
-既存スタイルに合わせ、4 スペースでインデントし、関数は `Verb-Noun`、変数は `PascalCase` を使用します。ユーザー向けメッセージは簡潔な中国語を維持してください。パスは文字列連結ではなく `Join-Path`、存在確認は `Test-Path` を使い、ブラウザ固有値は選択ブロックに集約します。
+沿用现有样式：使用 4 个空格缩进，函数采用 `Verb-Noun`，变量采用 `PascalCase`。面向用户的提示文字必须从 `locales` 语言资源读取，中文和日文资源键应保持一致。路径使用 `Join-Path` 组合，存在性使用 `Test-Path` 检查；浏览器特有配置集中放在选择分支中。
 
-## テスト方針
+## 测试要求
 
-現在、自動テストとカバレッジ基準はありません。変更後は構文チェックに加え、Windows Sandbox またはテスト用アカウントで手動確認します。テストを追加する場合は Pester を使用し、`tests/*.Tests.ps1` に配置してください。ファイル作成や COM 操作はモック化します。
+目前没有自动化测试或覆盖率要求。修改后必须进行 PowerShell 语法检查，并在测试账户下手动验证 Edge 和 Chrome。新增测试时使用 Pester，放在 `tests/*.Tests.ps1`，并模拟文件写入和 COM 操作。
 
-## コミットとプルリクエスト
+## 提交与拉取请求
 
-この作業コピーには Git 履歴がないため、履歴由来の慣例は確認できません。コミットは日本語の複数行形式にします。
+Git 提交信息必须使用日语多行格式：首行为 `type: 概要`，后续使用 `- ` 描述具体变更。`type` 可使用 `feat`、`fix`、`chore`、`docs`、`refactor` 或 `test`。
 
 ```text
-fix: ショートカット作成時の検証を改善
-- 不正なアカウント名の処理を追加しました
-- 手動確認手順を更新しました
+docs: <使用日语填写提交概要>
+- <使用日语填写具体变更>
+- <使用日语填写具体变更>
 ```
 
-PR には変更理由、影響するブラウザ、実行した検証、生成先への影響を記載してください。画面表示を変更した場合は、コンソール出力のスクリーンショットを添付します。
+拉取请求应说明修改原因、影响的浏览器、已执行的验证和生成目录影响。控制台显示发生变化时，应附截图。
 
-## セキュリティと設定
+## 安全与配置
 
-実在するブラウザプロファイルをテストに使用しないでください。ユーザー入力を実行可能な引数へ追加する場合は必ず検証し、認証情報、プロファイルデータ、生成された `.lnk` をコミットしないでください。
+不得使用真实浏览器配置进行测试。将用户输入加入可执行参数前必须验证。禁止提交认证信息、浏览器配置数据和生成的 `.lnk` 文件。

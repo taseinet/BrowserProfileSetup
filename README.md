@@ -1,5 +1,7 @@
 # Browser Profile Setup
 
+![Browser Profile Setup 项目横幅](./assets/browser-profile-setup-banner.png)
+
 简体中文 | [日本語](./README.ja.md)
 
 这是一个 Windows 工具，用于为 Microsoft Edge 或 Google Chrome 创建相互独立的浏览器配置，并生成对应的桌面快捷方式。
@@ -79,6 +81,7 @@ BrowserProfileSetup.ps1  # 主脚本
 Start.bat                # 双击启动入口
 locales\zh-CN.psd1       # 简体中文界面文本
 locales\ja-JP.psd1       # 日文界面文本
+assets\browser-profile-setup-banner.png  # README 项目横幅
 AGENTS.md                # 贡献者与代理协作指南
 README.md                # 项目说明
 README.ja.md             # 日文项目说明

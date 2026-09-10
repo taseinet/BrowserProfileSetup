@@ -11,6 +11,7 @@
 - `BrowserProfileSetup.ps1`：负责浏览器检测、输入验证、配置目录和 `.lnk` 快捷方式创建。
 - `Start.bat`：设置 UTF-8 代码页并启动 PowerShell 主脚本。
 - `locales/zh-CN.psd1`、`locales/ja-JP.psd1`：分别保存简体中文和日文界面文本。
+- `assets/`：保存 README 使用的项目图片等静态资源。
 
 生成内容位于 `Documents\EdgeProfiles`、`Documents\ChromeProfiles` 和桌面，不应写入仓库。新增业务逻辑应放在 PowerShell 脚本中，批处理文件仅作为轻量启动入口。
 

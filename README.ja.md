@@ -1,5 +1,7 @@
 # Browser Profile Setup
 
+![Browser Profile Setup プロジェクトバナー](./assets/browser-profile-setup-banner.png)
+
 [简体中文](./README.md) | 日本語
 
 Microsoft Edge または Google Chrome 用に独立したブラウザープロファイルを作成し、対応するデスクトップショートカットを生成する Windows 向けツールです。
@@ -79,6 +81,7 @@ BrowserProfileSetup.ps1  # メインスクリプト
 Start.bat                # ダブルクリック用ランチャー
 locales\zh-CN.psd1       # 簡体字中国語の表示テキスト
 locales\ja-JP.psd1       # 日本語の表示テキスト
+assets\browser-profile-setup-banner.png  # README プロジェクトバナー
 AGENTS.md                # コントリビューターおよびエージェント向けガイド
 README.md                # 中国語版プロジェクト説明
 README.ja.md             # 日本語版プロジェクト説明

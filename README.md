@@ -1,5 +1,7 @@
 # Browser Profile Setup
 
+简体中文 | [日本語](./README.ja.md)
+
 这是一个 Windows 工具，用于为 Microsoft Edge 或 Google Chrome 创建相互独立的浏览器配置，并生成对应的桌面快捷方式。
 
 它适合管理多个店铺、工作账户或测试环境。每个环境分别保存 Cookie、登录状态和浏览器设置，互不影响。
@@ -79,6 +81,7 @@ locales\zh-CN.psd1       # 简体中文界面文本
 locales\ja-JP.psd1       # 日文界面文本
 AGENTS.md                # 贡献者与代理协作指南
 README.md                # 项目说明
+README.ja.md             # 日文项目说明
 ```
 
 ## 开发验证

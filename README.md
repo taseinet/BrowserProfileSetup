@@ -12,8 +12,7 @@
 
 - 支持 Microsoft Edge 和 Google Chrome
 - 自动检测已安装的浏览器
-- 根据 Windows 用户首选语言设置默认的中文或日文
-- 启动时可手动选择界面语言
+- 根据 Windows 用户首选语言自动显示中文或日文
 - 为每个账户创建独立的用户数据目录
 - 自动生成专用桌面快捷方式
 - 覆盖同名快捷方式前进行确认
@@ -30,11 +29,10 @@
 ## 使用方法
 
 1. 双击 `Start.bat`。
-2. 程序先使用系统默认语言显示选择菜单；直接按 Enter 使用默认语言，或输入 `1`、`2` 手动选择中文、日文。
-3. 选择需要使用的浏览器。
-4. 输入账户名称，例如 `店铺A`。
-5. 根据提示选择是否立即启动新环境。
-6. 后续直接使用桌面生成的快捷方式。
+2. 选择需要使用的浏览器。
+3. 输入账户名称，例如 `店铺A`。
+4. 根据提示选择是否立即启动新环境。
+5. 后续直接使用桌面生成的快捷方式。
 
 也可以通过 PowerShell 直接运行：
 
@@ -42,12 +40,7 @@
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\BrowserProfileSetup.ps1
 ```
 
-程序读取 Windows 用户语言列表中的第一项；日语默认使用日文，其他语言默认使用中文。也可以通过参数固定界面语言并跳过启动选择：
-
-```powershell
-.\BrowserProfileSetup.ps1 -Language zh-CN
-.\BrowserProfileSetup.ps1 -Language ja-JP
-```
+程序读取 Windows 用户语言列表中的第一项；日语系统使用日文，其他语言使用中文。
 
 ## 生成位置
 

@@ -1,10 +1,4 @@
 ﻿@{
-    SelectLanguage          = "言語を選択してください："
-    ChineseLanguageName     = "中国語"
-    JapaneseLanguageName    = "日本語"
-    UseSystemDefaultLanguage = "Enter キーでシステム既定の言語を使用：{0}"
-    EnterLanguageChoice     = "1 または 2 を入力してください"
-    InvalidLanguageChoice   = "入力が正しくありません。もう一度選択してください。"
     WindowTitle            = "複数アカウント用ブラウザー環境作成ツール"
     HeaderTitle            = "複数アカウント用ブラウザー環境作成ツール"
     SelectBrowser          = "ブラウザーを選択してください："

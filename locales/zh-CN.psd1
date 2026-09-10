@@ -1,10 +1,4 @@
 ﻿@{
-    SelectLanguage          = "请选择语言："
-    ChineseLanguageName     = "中文"
-    JapaneseLanguageName    = "日文"
-    UseSystemDefaultLanguage = "直接按 Enter 使用系统默认语言：{0}"
-    EnterLanguageChoice     = "请输入 1 或 2"
-    InvalidLanguageChoice   = "输入错误，请重新选择。"
     WindowTitle            = "多账号浏览器环境创建工具"
     HeaderTitle            = "多账号浏览器环境创建工具"
     SelectBrowser          = "请选择浏览器："

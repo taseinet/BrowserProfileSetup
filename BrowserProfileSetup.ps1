@@ -3,63 +3,13 @@
 # 支持 Microsoft Edge / Google Chrome
 # ============================================
 
-param(
-    [ValidateSet("auto", "zh-CN", "ja-JP")]
-    [string]$Language = "auto"
-)
+$SystemLanguage = (Get-WinUserLanguageList | Select-Object -First 1).LanguageTag
 
-if ($Language -eq "auto") {
-
-    $SystemLanguage = (Get-WinUserLanguageList | Select-Object -First 1).LanguageTag
-
-    if ([string]::IsNullOrWhiteSpace($SystemLanguage)) {
-        $SystemLanguage = [Globalization.CultureInfo]::CurrentCulture.Name
-    }
-
-    $DefaultLanguage = if ($SystemLanguage -like "ja*") { "ja-JP" } else { "zh-CN" }
-    $MenuMessagesPath = Join-Path $PSScriptRoot "locales\$DefaultLanguage.psd1"
-    $MenuMessages = Import-PowerShellDataFile $MenuMessagesPath
-    $DefaultLanguageName = if ($DefaultLanguage -eq "ja-JP") {
-        $MenuMessages.JapaneseLanguageName
-    }
-    else {
-        $MenuMessages.ChineseLanguageName
-    }
-
-    Clear-Host
-
-    while ($true) {
-
-        Write-Host $MenuMessages.SelectLanguage -ForegroundColor White
-        Write-Host ""
-        Write-Host ("  1. {0}" -f $MenuMessages.ChineseLanguageName)
-        Write-Host ("  2. {0}" -f $MenuMessages.JapaneseLanguageName)
-        Write-Host ""
-        Write-Host ($MenuMessages.UseSystemDefaultLanguage -f $DefaultLanguageName)
-        Write-Host ""
-
-        $LanguageChoice = Read-Host $MenuMessages.EnterLanguageChoice
-
-        if ([string]::IsNullOrWhiteSpace($LanguageChoice)) {
-            $Language = $DefaultLanguage
-            break
-        }
-        elseif ($LanguageChoice -eq "1") {
-            $Language = "zh-CN"
-            break
-        }
-        elseif ($LanguageChoice -eq "2") {
-            $Language = "ja-JP"
-            break
-        }
-        else {
-            Write-Host ""
-            Write-Host $MenuMessages.InvalidLanguageChoice -ForegroundColor Yellow
-            Write-Host ""
-        }
-    }
+if ([string]::IsNullOrWhiteSpace($SystemLanguage)) {
+    $SystemLanguage = [Globalization.CultureInfo]::CurrentCulture.Name
 }
 
+$Language = if ($SystemLanguage -like "ja*") { "ja-JP" } else { "zh-CN" }
 $MessagesPath = Join-Path $PSScriptRoot "locales\$Language.psd1"
 $Messages = Import-PowerShellDataFile $MessagesPath
 

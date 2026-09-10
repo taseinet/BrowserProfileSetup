@@ -10,6 +10,7 @@
     BrowserFound           = "✓ 已找到 {0}"
     EnterAccountName       = "请输入账号名称，例如：店铺A"
     AccountNameEmpty       = "账号名称不能为空，请重新输入。"
+    AccountNameInvalid     = "账号名称不能包含 Windows 文件名禁用字符、首尾空格、末尾句点或系统保留名称，请重新输入。"
     StepCreateProfile      = "[1/3] 创建浏览器数据目录..."
     DesktopAlreadyExists   = "桌面已经存在："
     ConfirmOverwrite       = "是否覆盖？(Y/N)"

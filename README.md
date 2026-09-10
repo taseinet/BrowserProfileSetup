@@ -58,7 +58,7 @@ Documents\ChromeProfiles\<账户名称>
 <账户名称> - Chrome.lnk
 ```
 
-账户名称中不能用于 Windows 文件名的字符会自动替换为 `_`。
+账户名称不能包含 Windows 文件名禁用字符、首尾空格、末尾句点或 `CON`、`PRN`、`AUX`、`NUL`、`COM1`～`COM9`、`LPT1`～`LPT9` 等系统保留名称。输入不符合要求时，程序会提示重新输入。
 
 ## 注意事项
 

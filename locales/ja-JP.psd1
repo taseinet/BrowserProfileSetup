@@ -10,6 +10,7 @@
     BrowserFound           = "✓ {0} が見つかりました"
     EnterAccountName       = "アカウント名を入力してください（例：店舗A）"
     AccountNameEmpty       = "アカウント名を入力してください。"
+    AccountNameInvalid     = "アカウント名には、Windows のファイル名に使用できない文字、先頭または末尾の空白、末尾のピリオド、システム予約名を使用できません。もう一度入力してください。"
     StepCreateProfile      = "[1/3] ブラウザーデータフォルダーを作成しています..."
     DesktopAlreadyExists   = "デスクトップに既に存在します："
     ConfirmOverwrite       = "上書きしますか？(Y/N)"

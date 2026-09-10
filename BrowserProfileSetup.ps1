@@ -25,6 +25,30 @@ function Show-Header {
     Write-Host ""
 }
 
+function Test-AccountName {
+    param(
+        [string]$Name
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Name)) {
+        return $false
+    }
+
+    if ($Name -ne $Name.Trim()) {
+        return $false
+    }
+
+    if ($Name.IndexOfAny([IO.Path]::GetInvalidFileNameChars()) -ge 0) {
+        return $false
+    }
+
+    if ($Name -in @(".", "..") -or $Name.EndsWith(".")) {
+        return $false
+    }
+
+    return $Name -notmatch '^(?i:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\..*)?$'
+}
+
 Show-Header
 
 # ------------------------------------------------
@@ -139,8 +163,6 @@ while ($true) {
 
     $AccountName = Read-Host $Messages.EnterAccountName
 
-    $AccountName = $AccountName.Trim()
-
     if ([string]::IsNullOrWhiteSpace($AccountName)) {
 
         Write-Host ""
@@ -150,22 +172,20 @@ while ($true) {
         continue
     }
 
-    # ------------------------------------------------
-    # 清理 Windows 文件名非法字符
-    # ------------------------------------------------
+    if (-not (Test-AccountName $AccountName)) {
 
-    $SafeName = $AccountName
+        Write-Host ""
+        Write-Host $Messages.AccountNameInvalid -ForegroundColor Yellow
+        Write-Host ""
 
-    foreach ($InvalidChar in [IO.Path]::GetInvalidFileNameChars()) {
-
-        $SafeName = $SafeName.Replace($InvalidChar, "_")
+        continue
     }
 
     # ------------------------------------------------
     # 数据目录
     # ------------------------------------------------
 
-    $ProfilePath = Join-Path $BaseProfilePath $SafeName
+    $ProfilePath = Join-Path $BaseProfilePath $AccountName
 
     # ------------------------------------------------
     # 桌面快捷方式
